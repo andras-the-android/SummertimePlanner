@@ -5,7 +5,9 @@ import java.util.List;
 
 import org.junit.Assert;
 import org.junit.Before;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 
 import hu.andrasn.summertime.formatter.DestinationOutputFormatterImpl;
 import hu.andrasn.summertime.parser.DestinationParserImpl;
@@ -14,6 +16,9 @@ import hu.andrasn.summertime.parser.DestinationParserImpl;
 public class PlannerTest {
 	
 	private Planner target;
+	
+	@Rule
+	public ExpectedException expectedEx = ExpectedException.none();
 	
 	@Before
 	public void setUp() {
@@ -95,5 +100,18 @@ public class PlannerTest {
 		String result = target.plan(input);
 		
 		Assert.assertEquals("d => c => a => b => e => f => i => h => g => j", result);
+	}
+	
+	@Test
+	public void testLoopDetection() {
+		List<String> input = new ArrayList<>();
+		input.add("a => b");
+		input.add("b => c");
+		input.add("c => a");
+		
+		expectedEx.expect(IllegalArgumentException.class);
+	    expectedEx.expectMessage("A loop detected among the destinations" );
+		
+		target.plan(input);
 	}
 }

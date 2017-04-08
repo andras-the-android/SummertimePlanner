@@ -27,15 +27,22 @@ public class Planner {
 	}
 	
 	private void orderDestinations() {
-//		orderedDestinations.addAll(destinations.keySet());
 		for (DestinationDto destination : destinations) {
+			boolean loopCheckPassed = false;
 			if (!orderedDestinations.contains(destination.getName())) {
 				orderedDestinations.add(destination.getName());
+				loopCheckPassed = true;
 			}
 			if (destination.hasDependency()) {
 				if (!orderedDestinations.contains(destination.getDependency())) {
 					orderedDestinations.insertBefore(destination.getDependency(), destination.getName());
+					loopCheckPassed = true;
 				}
+			} else {
+				loopCheckPassed = true;
+			}
+			if (!loopCheckPassed) {
+				throw new IllegalArgumentException("A loop detected among the destinations");
 			}
 		}
 	}
