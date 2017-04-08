@@ -19,6 +19,6 @@ public class DestinationDto {
 	}
 	
 	public boolean hasDependency() {
-		return dependency != null;
+		return dependency != null && !dependency.isEmpty();
 	}
 }

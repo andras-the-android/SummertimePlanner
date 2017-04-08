@@ -1,9 +1,9 @@
 package hu.andrasn.summertime.parser;
 
 import java.util.ArrayList;
-import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
-import java.util.Map;
+import java.util.Set;
 
 import hu.andrasn.summertime.data.DestinationDto;
 
@@ -15,15 +15,16 @@ public class DestinationParserImpl implements DestinationParser  {
 		
 		if (inputDestinations != null) {
 			for (String inputDestination : inputDestinations) {			
-				check(inputDestination);				
+				checkFormat(inputDestination);				
 				putToList(destinations, inputDestination);
 			}
+			checkIntegrity(destinations);
 		}	
 		
 		return destinations;
 	}
 
-	private void check(String inputDestination) {
+	private void checkFormat(String inputDestination) {
 		if (inputDestination == null) {
 			throw new IllegalArgumentException("Input destination is null");
 		}
@@ -47,6 +48,21 @@ public class DestinationParserImpl implements DestinationParser  {
 		}
 		dto.setDependency(dependency);
 		destinations.add(dto);
+	}
+	
+	private void checkIntegrity(List<DestinationDto> destinations) {
+		Set<String> destinationSet = new HashSet<>();
+		for (DestinationDto destination : destinations) {
+			if (destinationSet.contains(destination.getName())) {
+				throw new IllegalStateException("Duplicated destination: " + destination.getName());
+			}
+			destinationSet.add(destination.getName());			
+		}
+		for (DestinationDto destination : destinations) {
+			if (destination.hasDependency() && !destinationSet.contains(destination.getDependency())) {
+				throw new IllegalArgumentException("Non-existing dependency: " + destination.getDependency());
+			}
+		}
 	}
 
 

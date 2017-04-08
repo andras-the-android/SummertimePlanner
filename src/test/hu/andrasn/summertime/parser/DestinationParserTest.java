@@ -66,12 +66,14 @@ public class DestinationParserTest {
 		inputDestinations.add("y=>z");
 		inputDestinations.add("z => ");
 		inputDestinations.add("this is longer and =>has spaces");
+		inputDestinations.add("has spaces=>");
 		inputDestinations.add("@&% =>   123");
+		inputDestinations.add("123=>");
 		
 		List<DestinationDto> result = new DestinationParserImpl().parse(inputDestinations);
 		DestinationDto dto;
 		
-		assertEquals(5, result.size());
+		assertEquals(7, result.size());
 		
 		dto = result.get(0);
 		assertEquals("x", dto.getName());
@@ -89,7 +91,7 @@ public class DestinationParserTest {
 		assertEquals("this is longer and", dto.getName());
 		assertEquals("has spaces", dto.getDependency());
 		
-		dto = result.get(4);
+		dto = result.get(5);
 		assertEquals("@&%", dto.getName());
 		assertEquals("123", dto.getDependency());
 		
@@ -131,6 +133,32 @@ public class DestinationParserTest {
 		
 		expectedEx.expect(IllegalArgumentException.class);
 	    expectedEx.expectMessage("Input destination can contain only one \"=>\": x=>y=>z");
+		
+	    new DestinationParserImpl().parse(inputDestinations);
+	}
+	
+	@Test
+	public void testMissingDependencies() {
+		List<String> inputDestinations = new ArrayList<>();	
+		inputDestinations.add("x =>");
+		inputDestinations.add("y => u");
+		inputDestinations.add("z => ");
+		
+		expectedEx.expect(IllegalArgumentException.class);
+	    expectedEx.expectMessage("Non-existing dependency: u" );
+		
+	    new DestinationParserImpl().parse(inputDestinations);
+	}
+	
+	@Test
+	public void testDuplicatedDestination() {
+		List<String> inputDestinations = new ArrayList<>();	
+		inputDestinations.add("x =>");
+		inputDestinations.add("z =>");
+		inputDestinations.add("x => ");
+		
+		expectedEx.expect(IllegalArgumentException.class);
+	    expectedEx.expectMessage("Duplicated destination: x" );
 		
 	    new DestinationParserImpl().parse(inputDestinations);
 	}
