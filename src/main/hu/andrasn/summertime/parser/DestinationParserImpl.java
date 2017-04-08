@@ -16,7 +16,7 @@ public class DestinationParserImpl implements DestinationParser  {
 		if (inputDestinations != null) {
 			for (String inputDestination : inputDestinations) {			
 				checkFormat(inputDestination);				
-				putToList(destinations, inputDestination);
+				addToList(destinations, inputDestination);
 			}
 			checkIntegrity(destinations);
 		}	
@@ -38,7 +38,7 @@ public class DestinationParserImpl implements DestinationParser  {
 		}
 	}
 	
-	private void putToList(List<DestinationDto> destinations, String inputDestination) {
+	private void addToList(List<DestinationDto> destinations, String inputDestination) {
 		String[] parsedInputRow = inputDestination.split("=>");
 		DestinationDto dto = new DestinationDto();
 		dto.setName(parsedInputRow[0].trim());
@@ -54,7 +54,7 @@ public class DestinationParserImpl implements DestinationParser  {
 		Set<String> destinationSet = new HashSet<>();
 		for (DestinationDto destination : destinations) {
 			if (destinationSet.contains(destination.getName())) {
-				throw new IllegalStateException("Duplicated destination: " + destination.getName());
+				throw new IllegalArgumentException("Duplicated destination: " + destination.getName());
 			}
 			destinationSet.add(destination.getName());			
 		}

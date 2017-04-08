@@ -31,23 +31,23 @@ public class LinkedList<T> {
 	}
 	
 	public void insertBefore(T item, T before) {
-		ListItem<T> itemBefore = searchMap.get(before);
+		ListItem<T> beforeListItem = searchMap.get(before);
 		
-		if (itemBefore == null) {
+		if (beforeListItem == null) {
 			throw new IllegalArgumentException("No such item in the list: " + before);
 		}
 		
 		ListItem<T> newListItem = new ListItem<T>(item);
 		searchMap.put(item,  newListItem);
 		
-		if (itemBefore.previous != null) {
-			itemBefore.previous.next = newListItem;
-			newListItem.previous = itemBefore.previous;
+		if (beforeListItem.previous != null) {
+			beforeListItem.previous.next = newListItem;
+			newListItem.previous = beforeListItem.previous;
 		} else {
 			firstItem = newListItem;
 		}		
-		newListItem.next = itemBefore;
-		itemBefore.previous = newListItem;
+		newListItem.next = beforeListItem;
+		beforeListItem.previous = newListItem;
 	}
 	
 	public boolean contains(T item) {
